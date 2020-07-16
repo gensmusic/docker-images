@@ -17,7 +17,7 @@ jobs:
         name: check out code
         
       - uses: mr-smithers-excellent/docker-build-push@v3
-      - name: Build & push the Docker image
+        name: Build & push the Docker image
         with:
           image: gensmusic/testworkflow
           tag: latest
