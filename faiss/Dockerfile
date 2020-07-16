@@ -1,6 +1,5 @@
 FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04
 
-
 # rm is the workaround for chucksum mismatch
 RUN rm /etc/apt/sources.list.d/cuda.list && \
     apt-get update && \
