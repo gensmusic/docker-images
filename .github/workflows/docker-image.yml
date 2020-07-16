@@ -3,15 +3,15 @@ name: Docker Image CI
 on:
   push:
     branches: [ master ]
+    paths:
+      - faiss
   pull_request:
     branches: [ master ]
-
+    paths:
+      - faiss
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
         name: check out code
