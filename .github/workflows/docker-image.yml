@@ -15,4 +15,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      env:
+        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      run: docker build . --file Dockerfile --tag my-image-name-${DOCKER_HUB_USERNAME}:$(date +%s)
+      timeout-minutes: 1
+      
