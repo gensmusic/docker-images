@@ -19,8 +19,8 @@ jobs:
       - uses: mr-smithers-excellent/docker-build-push@v3
         name: Build & push the Docker image
         with:
-          image: gensmusic/faiss:10.2-cudnn7-devel-ubuntu18.04
-          tag: latest
+          image: gensmusic/faiss-10.2-cudnn7-devel-ubuntu18.04
+          tag: test01
           registry: docker.io
           dockerfile: faiss/Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
