@@ -4,11 +4,11 @@ on:
   push:
     branches: [ master ]
     paths:
-      - faiss
+      - 'faiss/**'
   pull_request:
     branches: [ master ]
     paths:
-      - faiss
+      - 'faiss/**'
 jobs:
   build:
     runs-on: ubuntu-latest
