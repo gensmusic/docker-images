@@ -20,6 +20,7 @@ RUN yum install -y python-devel numpy
 
 # WORKDIR /opt/faiss
 
+
 # # --with-cuda=/usr/local/cuda-8.0 
 # RUN ./configure --prefix=/usr --libdir=/usr/lib64 --without-cuda
 # RUN make -j $(nproc)
