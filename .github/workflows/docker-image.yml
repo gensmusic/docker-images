@@ -13,10 +13,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      env:
-        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-      run: docker build . --file Dockerfile --tag my-image-name-${DOCKER_HUB_USERNAME}:$(date +%s)
-      timeout-minutes: 1
+      - uses: actions/checkout@v2
+        name: check out code
+        
+      - uses: mr-smithers-excellent/docker-build-push@v3
+      - name: Build & push the Docker image
+        with:
+          image: gensmusic/testworkflow
+          tag: latest
+          registry: docker.io
+          dockerfile: Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       
