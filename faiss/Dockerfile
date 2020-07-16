@@ -14,8 +14,7 @@ RUN cd /tmp && \
     unzip ${FAISS_VERSION}.zip && \
     mv faiss-* /faiss
 
-RUN cd /faiss && ./configure --with-cuda=/usr/local/cuda 
-    
-# RUN make clean &&  make -j 10 && make install
+RUN cd /faiss && ./configure --with-cuda=/usr/local/cuda && \
+    make -j 10 && make install && make clean
 
 ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
