@@ -18,7 +18,7 @@ jobs:
       - uses: mr-smithers-excellent/docker-build-push@v3
         name: Build & push faiss Dev docker image
         with:
-          image: gensmusic/faiss-sys-10.2-cudnn7-devel-ubuntu18.04
+          image: gensmusic/faiss-sys-10.1-cudnn7-devel-ubuntu18.04
           tag: dev
           registry: docker.io
           dockerfile: faiss/faiss-sys.Dockerfile

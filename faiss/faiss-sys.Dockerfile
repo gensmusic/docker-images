@@ -1,4 +1,4 @@
-FROM gensmusic/faiss-10.2-cudnn7-devel-ubuntu18.04:dev
+FROM gensmusic/faiss-10.1-cudnn7-devel-ubuntu18.04:dev
 
 ENV PATH="/root/.cargo/bin:$PATH"
 
