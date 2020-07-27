@@ -1,0 +1,26 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'faiss/faiss-sys.Dockerfile'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'faiss/faiss-sys.Dockerfile'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: check out code
+      - uses: mr-smithers-excellent/docker-build-push@v3
+        name: Build & push faiss Dev docker image
+        with:
+          image: gensmusic/faiss-sys-10.2-cudnn7-devel-ubuntu18.04
+          tag: dev
+          registry: docker.io
+          dockerfile: faiss/faiss-sys.Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
