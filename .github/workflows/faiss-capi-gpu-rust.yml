@@ -1,0 +1,27 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'faiss/faiss-capi-gpu-rust.Dockerfile'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'faiss/faiss-capi-gpu-rust.Dockerfile'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: check out code
+      - uses: mr-smithers-excellent/docker-build-push@v3
+        name: Build & push faiss Dev docker image
+        with:
+          image: gensmusic/faiss-capi-gpu-rust-10.1-cudnn7-devel-ubuntu18.04
+          # tag 是指定的 faiss的 SHA
+          tag: a93a4b39571db0ab6ad0b4ef42a6b8734ca05135
+          registry: docker.io
+          dockerfile: faiss/faiss-capi-gpu-rust.Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
