@@ -18,8 +18,8 @@ jobs:
       - uses: mr-smithers-excellent/docker-build-push@v3
         name: Build & push faiss Dev docker image
         with:
-          image: gensmusic/rust-bindgen:1.49
-          tag: dev
+          image: gensmusic/rust-bindgen
+          tag: 1.49
           registry: docker.io
           dockerfile: rust/thirdparty/bindgen.Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
