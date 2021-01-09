@@ -6,6 +6,7 @@ RUN apt-get update && \
     apt-get install -y wget git llvm-dev libclang-dev clang && \
     apt-get clean
 
+ENV PATH="/root/.cargo/bin:$PATH"
 ARG CARGO_CONFIG="/root/.cargo/config"
 RUN mkdir -p "/root/.cargo" && \
     echo "[source.crates-io]" >> ${CARGO_CONFIG} && \
