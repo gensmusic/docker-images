@@ -55,5 +55,18 @@ RUN wget http://mosquitto.org/files/source/mosquitto-${MOSQUITTO_VERSION}.tar.gz
         WITH_SRV=no \
         WITH_STRIP=yes \
         WITH_WEBSOCKETS=yes \
-        prefix=/usr \
-        binary
+        prefix=/usr
+
+RUN mkdir -p /mosquitto/config /mosquitto/data /mosquitto/log && \
+    install -d /usr/sbin/ && \
+    install -s -m755 /build/mosq/client/mosquitto_pub /usr/bin/mosquitto_pub && \
+    install -s -m755 /build/mosq/client/mosquitto_rr /usr/bin/mosquitto_rr && \
+    install -s -m755 /build/mosq/client/mosquitto_sub /usr/bin/mosquitto_sub && \
+    install -s -m644 /build/mosq/lib/libmosquitto.so.1 /usr/lib/libmosquitto.so.1 && \
+    install -s -m755 /build/mosq/src/mosquitto /usr/sbin/mosquitto && \
+    install -s -m755 /build/mosq/apps/mosquitto_ctrl/mosquitto_ctrl /usr/bin/mosquitto_ctrl && \
+    install -s -m755 /build/mosq/apps/mosquitto_passwd/mosquitto_passwd /usr/bin/mosquitto_passwd && \
+    install -s -m755 /build/mosq/plugins/dynamic-security/mosquitto_dynamic_security.so /usr/lib/mosquitto_dynamic_security.so && \
+    install -m644 /build/mosq/mosquitto.conf /mosquitto/config/mosquitto.conf
+
+RUN cp /usr/lib/libmosquitto.so.1 /usr/lib/libmosquitto.so
