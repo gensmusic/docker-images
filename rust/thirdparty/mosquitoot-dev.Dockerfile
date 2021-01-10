@@ -56,5 +56,4 @@ RUN wget http://mosquitto.org/files/source/mosquitto-${MOSQUITTO_VERSION}.tar.gz
         WITH_STRIP=yes \
         WITH_WEBSOCKETS=yes \
         prefix=/usr \
-        binary \
-    && make install
+        binary
