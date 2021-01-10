@@ -46,7 +46,6 @@ RUN wget http://mosquitto.org/files/source/mosquitto-${MOSQUITTO_VERSION}.tar.gz
     mkdir -p /build/mosq && \
     tar --strip=1 -xf /tmp/mosq.tar.gz -C /build/mosq && \
     rm /tmp/mosq.tar.gz && \
-    cd mosquitto-${MOSQUITTO_VERSION} && \
     make -C /build/mosq -j "$(nproc)" \
         CFLAGS="-Wall -O2 -I/build/lws/include -I/build" \
         LDFLAGS="-L/build/lws/lib -L/build/cjson" \
