@@ -1,5 +1,7 @@
 FROM rust:1.49.0-alpine3.12
 
+RUN apk add --no-cache musl-dev
+
 # install mosquitto
 ENV VERSION=2.0.5 \
     DOWNLOAD_SHA256=67eaeb4160e5793715c017f53c4f42808d76129b7ad131d765a6a23792e58d5d \
@@ -120,3 +122,5 @@ RUN mkdir -p "/usr/local/cargo" && \
     echo '[source.rustcc]' >> ${CARGO_CONFIG} && \
     echo 'registry = "git://crates.rustcc.cn/crates.io-index"' >> ${CARGO_CONFIG} && \
     cat ${CARGO_CONFIG}
+
+RUN cargo install cargo-cache
