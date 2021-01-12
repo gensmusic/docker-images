@@ -6,8 +6,8 @@ RUN apt-get update && \
     apt-get install -y wget git llvm-dev libclang-dev clang && \
     apt-get clean
 
-ARG CARGO_CONFIG="/root/.cargo/config"
-RUN mkdir -p "/root/.cargo" && \
+ARG CARGO_CONFIG="/usr/local/cargo/config"
+RUN mkdir -p "/usr/local/cargo" && \
     echo "[source.crates-io]" >> ${CARGO_CONFIG} && \
     echo 'replace-with = "rustcc"' >> ${CARGO_CONFIG} && \
     echo '[source.rustcc]' >> ${CARGO_CONFIG} && \
@@ -15,4 +15,4 @@ RUN mkdir -p "/root/.cargo" && \
     cat ${CARGO_CONFIG}
 
 RUN cargo install bindgen
-ENV PATH="/root/.cargo/bin:$PATH"
+ENV PATH="/root/.cargo/bin:/usr/local/cargo/bin:$PATH"

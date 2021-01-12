@@ -113,8 +113,8 @@ CMD ["/usr/sbin/mosquitto", "-c", "/mosquitto/config/mosquitto.conf"]
 
 
 # cargo 加速
-ARG CARGO_CONFIG="/root/.cargo/config"
-RUN mkdir -p "/root/.cargo" && \
+ARG CARGO_CONFIG="/usr/local/cargo/config"
+RUN mkdir -p "/usr/local/cargo" && \
     echo "[source.crates-io]" >> ${CARGO_CONFIG} && \
     echo 'replace-with = "rustcc"' >> ${CARGO_CONFIG} && \
     echo '[source.rustcc]' >> ${CARGO_CONFIG} && \
