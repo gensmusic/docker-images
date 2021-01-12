@@ -70,3 +70,4 @@ RUN mkdir -p /mosquitto/config /mosquitto/data /mosquitto/log && \
     install -m644 /build/mosq/mosquitto.conf /mosquitto/config/mosquitto.conf
 
 RUN cp /usr/lib/libmosquitto.so.1 /usr/lib/libmosquitto.so
+RUN rustup target add x86_64-unknown-linux-musl
