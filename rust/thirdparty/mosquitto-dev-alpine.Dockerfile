@@ -120,5 +120,3 @@ RUN mkdir -p "/root/.cargo" && \
     echo '[source.rustcc]' >> ${CARGO_CONFIG} && \
     echo 'registry = "git://crates.rustcc.cn/crates.io-index"' >> ${CARGO_CONFIG} && \
     cat ${CARGO_CONFIG}
-
-RUN cargo install cargo-cache
