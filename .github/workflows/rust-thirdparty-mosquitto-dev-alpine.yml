@@ -19,7 +19,7 @@ jobs:
         name: Build & push rust mosquitto Dev docker image
         with:
           image: gensmusic/rust-mosquitto-dev
-          tag: 1.49-alpine3.12
+          tag: 1.56.1-alpine3.14
           registry: docker.io
           dockerfile: rust/thirdparty/mosquitto-dev-alpine.Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}

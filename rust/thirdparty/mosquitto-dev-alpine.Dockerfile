@@ -1,21 +1,21 @@
-FROM rust:1.49.0-alpine3.12
+FROM rust:1.56.1-alpine3.14
 
 RUN apk add --no-cache musl-dev
 
 # install mosquitto
-ENV VERSION=2.0.5 \
-    DOWNLOAD_SHA256=67eaeb4160e5793715c017f53c4f42808d76129b7ad131d765a6a23792e58d5d \
+ENV VERSION=2.0.14 \
+    DOWNLOAD_SHA256=d0dde8fdb12caf6e2426b4f28081919a2fce3448773bdb8af0d3cd5fe5776925 \
     GPG_KEYS=A0D6EEA1DCAE49A635A3B2F0779B22DFB3E717B7 \
-    LWS_VERSION=2.4.2 \
-    LWS_SHA256=73012d7fcf428dedccc816e83a63a01462e27819d5537b8e0d0c7264bfacfad6 \
-    CJSON_VERSION=1.7.14 \
-    CJSON_SHA256=fb50a663eefdc76bafa80c82bc045af13b1363e8f45cec8b442007aef6a41343
+    LWS_VERSION=4.2.1 \
+    LWS_SHA256=842da21f73ccba2be59e680de10a8cce7928313048750eb6ad73b6fa50763c51
 
 RUN set -x && \
     apk --no-cache add --virtual build-deps \
         build-base \
         cmake \
+        cjson-dev \
         gnupg \
+        linux-headers \
         openssl-dev \
         util-linux-dev && \
     wget https://github.com/warmcat/libwebsockets/archive/v${LWS_VERSION}.tar.gz -O /tmp/lws.tar.gz && \
@@ -27,29 +27,17 @@ RUN set -x && \
     cmake . \
         -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DCMAKE_INSTALL_PREFIX=/usr \
+        -DDISABLE_WERROR=ON \
         -DLWS_IPV6=ON \
         -DLWS_WITHOUT_BUILTIN_GETIFADDRS=ON \
         -DLWS_WITHOUT_CLIENT=ON \
         -DLWS_WITHOUT_EXTENSIONS=ON \
         -DLWS_WITHOUT_TESTAPPS=ON \
+        -DLWS_WITH_EXTERNAL_POLL=ON \
+        -DLWS_WITH_HTTP2=OFF \
         -DLWS_WITH_SHARED=OFF \
         -DLWS_WITH_ZIP_FOPS=OFF \
         -DLWS_WITH_ZLIB=OFF && \
-    make -j "$(nproc)" && \
-    rm -rf /root/.cmake && \
-    wget https://github.com/DaveGamble/cJSON/archive/v${CJSON_VERSION}.tar.gz -O /tmp/cjson.tar.gz && \
-    echo "$CJSON_SHA256  /tmp/cjson.tar.gz" | sha256sum -c - && \
-    mkdir -p /build/cjson && \
-    tar --strip=1 -xf /tmp/cjson.tar.gz -C /build/cjson && \
-    rm /tmp/cjson.tar.gz && \
-    cd /build/cjson && \
-    cmake . \
-        -DCMAKE_BUILD_TYPE=MinSizeRel \
-        -DBUILD_SHARED_AND_STATIC_LIBS=OFF \
-        -DBUILD_SHARED_LIBS=OFF \
-        -DCJSON_BUILD_SHARED_LIBS=OFF \
-        -DCJSON_OVERRIDE_BUILD_SHARED_LIBS=OFF \
-        -DCMAKE_INSTALL_PREFIX=/usr && \
     make -j "$(nproc)" && \
     rm -rf /root/.cmake && \
     wget https://mosquitto.org/files/source/mosquitto-${VERSION}.tar.gz -O /tmp/mosq.tar.gz && \
@@ -75,7 +63,7 @@ RUN set -x && \
     rm /tmp/mosq.tar.gz && \
     make -C /build/mosq -j "$(nproc)" \
         CFLAGS="-Wall -O2 -I/build/lws/include -I/build" \
-        LDFLAGS="-L/build/lws/lib -L/build/cjson" \
+        LDFLAGS="-L/build/lws/lib" \
         WITH_ADNS=no \
         WITH_DOCS=no \
         WITH_SHARED_LIBRARIES=yes \
@@ -97,12 +85,15 @@ RUN set -x && \
     install -s -m755 /build/mosq/apps/mosquitto_passwd/mosquitto_passwd /usr/bin/mosquitto_passwd && \
     install -s -m755 /build/mosq/plugins/dynamic-security/mosquitto_dynamic_security.so /usr/lib/mosquitto_dynamic_security.so && \
     install -m644 /build/mosq/mosquitto.conf /mosquitto/config/mosquitto.conf && \
+    install -Dm644 /build/lws/LICENSE /usr/share/licenses/libwebsockets/LICENSE && \
+    install -Dm644 /build/mosq/epl-v20 /usr/share/licenses/mosquitto/epl-v20 && \
+    install -Dm644 /build/mosq/edl-v10 /usr/share/licenses/mosquitto/edl-v10 && \
     chown -R mosquitto:mosquitto /mosquitto && \
     apk --no-cache add \
-        ca-certificates && \
+        ca-certificates \
+        cjson && \
     apk del build-deps && \
     rm -rf /build
-RUN cp /usr/lib/libmosquitto.so.1 /usr/lib/libmosquitto.so
 
 
 VOLUME ["/mosquitto/data", "/mosquitto/log"]
@@ -112,6 +103,8 @@ ADD ./rust/thirdparty/mosquitto-docker-entrypoint.sh  /docker-entrypoint.sh
 EXPOSE 1883
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/usr/sbin/mosquitto", "-c", "/mosquitto/config/mosquitto.conf"]
+
+RUN cp /usr/lib/libmosquitto.so.1 /usr/lib/libmosquitto.so
 
 
 # cargo 加速
