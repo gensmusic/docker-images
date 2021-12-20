@@ -110,10 +110,20 @@ RUN cp /usr/lib/libmosquitto.so.1 /usr/lib/libmosquitto.so
 # cargo 加速
 ARG CARGO_CONFIG="/usr/local/cargo/config"
 RUN mkdir -p "/usr/local/cargo" && \
-    echo "[source.crates-io]" >> ${CARGO_CONFIG} && \
-    echo 'replace-with = "rustcc"' >> ${CARGO_CONFIG} && \
-    echo '[source.rustcc]' >> ${CARGO_CONFIG} && \
-    echo 'registry = "git://crates.rustcc.cn/crates.io-index"' >> ${CARGO_CONFIG} && \
+    echo '[source.crates-io]'  > ${CARGO_CONFIG} && \
+    echo 'replace-with = "rsproxy"'  >> ${CARGO_CONFIG} && \
+    echo '[source.rsproxy]'  >> ${CARGO_CONFIG} && \
+    echo 'registry = "https://rsproxy.cn/crates.io-index"'  >> ${CARGO_CONFIG} && \
+    echo '[registries.rsproxy]'  >> ${CARGO_CONFIG} && \
+    echo 'index = "https://rsproxy.cn/crates.io-index"'  >> ${CARGO_CONFIG} && \
+    echo '[net]'  >> ${CARGO_CONFIG} && \
+    echo 'git-fetch-with-cli = true'  >> ${CARGO_CONFIG} && \
+    echo ''  >> ${CARGO_CONFIG} && \
     cat ${CARGO_CONFIG}
+
+ENV RUSTUP_DIST_SERVER="https://rsproxy.cn"
+ENV RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
+
+RUN apk add git
 
 RUN cargo install cargo-cache
