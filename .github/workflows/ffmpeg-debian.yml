@@ -1,0 +1,26 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - ffmpeg/debian.Dockerfile
+  pull_request:
+    branches: [ master ]
+    paths:
+      - ffmpeg/debian.Dockerfile
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: check out code
+      - uses: mr-smithers-excellent/docker-build-push@v3
+        name: Build & push Debian FFmpeg docker image
+        with:
+          image: gensmusic/ffmpeg
+          tag: debian-dev
+          registry: docker.io
+          dockerfile: ffmpeg/debian.Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
