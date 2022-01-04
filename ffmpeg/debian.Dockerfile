@@ -30,6 +30,10 @@ RUN apt install -y libunistring-dev
 
 RUN mkdir -p ~/ffmpeg_sources ~/ffmpeg_build/bin
 
+# 平时编译的时候就简单了.
+ENV PATH "/root/ffmpeg_build/bin:$PATH"
+ENV PKG_CONFIG_PATH "/root/ffmpeg_build/lib/pkgconfig"
+
 # NASM
 RUN cd ~/ffmpeg_sources && \
     wget https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2 && \
@@ -38,7 +42,8 @@ RUN cd ~/ffmpeg_sources && \
     ./autogen.sh && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/ffmpeg_build/bin" && \
     make && \
-    make install
+    make install && \
+    cd .. && rm -rf nasm-2.15.05*
 
 # libx264
 RUN cd ~/ffmpeg_sources && \
@@ -46,17 +51,20 @@ RUN cd ~/ffmpeg_sources && \
     cd x264 && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/ffmpeg_build/bin" --enable-static --enable-pic && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" make && \
-    make install
+    make install && \
+    cd .. && rm -rf x264
 
 # libx265
 RUN apt-get -y install libnuma-dev && \
     cd ~/ffmpeg_sources && \
     wget -O x265.tar.bz2 https://bitbucket.org/multicoreware/x265_git/get/master.tar.bz2 && \
     tar xjvf x265.tar.bz2 && \
+    rm -rf x265.tar.bz2 && \
     cd multicoreware*/build/linux && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off ../../source && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" make && \
-    make install
+    make install && \
+    cd ../../.. && rm -rf multicoreware*
 
 # libvpx
 RUN cd ~/ffmpeg_sources && \
@@ -64,7 +72,8 @@ RUN cd ~/ffmpeg_sources && \
     cd libvpx && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" make && \
-    make install
+    make install && \
+    cd .. && rm -rf libvpx
 
 # libfdk-aac
 RUN cd ~/ffmpeg_sources && \
@@ -73,7 +82,8 @@ RUN cd ~/ffmpeg_sources && \
     autoreconf -fiv && \
     ./configure --prefix="$HOME/ffmpeg_build" --disable-shared && \
     make && \
-    make install
+    make install && \
+    cd .. && rm -rf fdk-aac
 
 # libopus
 RUN cd ~/ffmpeg_sources && \
@@ -82,7 +92,8 @@ RUN cd ~/ffmpeg_sources && \
     ./autogen.sh && \
     ./configure --prefix="$HOME/ffmpeg_build" --disable-shared && \
     make && \
-    make install
+    make install && \
+    cd .. && rm -rf opus
 
 # libaom
 RUN cd ~/ffmpeg_sources && \
@@ -91,7 +102,8 @@ RUN cd ~/ffmpeg_sources && \
     cd aom_build && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_TESTS=OFF -DENABLE_NASM=on ../aom && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" make && \
-    make install
+    make install && \
+    cd .. && rm -rf aom*
 
 # libsvtav1
 RUN cd ~/ffmpeg_sources && \
@@ -100,7 +112,8 @@ RUN cd ~/ffmpeg_sources && \
     cd SVT-AV1/build && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DCMAKE_BUILD_TYPE=Release -DBUILD_DEC=OFF -DBUILD_SHARED_LIBS=OFF .. && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" make && \
-    make install
+    make install && \
+    cd ../.. && rm -rf SVT-AV1
 
 # libdav1d
 RUN apt-get install -y python3-pip && \
@@ -111,22 +124,26 @@ RUN cd ~/ffmpeg_sources && \
     cd dav1d/build && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" meson setup -Denable_tools=false -Denable_tests=false --default-library=static .. --prefix "$HOME/ffmpeg_build" --libdir="$HOME/ffmpeg_build/lib" && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" ninja && \
-    ninja install
+    ninja install && \
+    cd ../.. && rm -rf dav1d
 
 # libvmaf
 RUN cd ~/ffmpeg_sources && \
     wget https://github.com/Netflix/vmaf/archive/v2.1.1.tar.gz && \
     tar xvf v2.1.1.tar.gz && \
+    rm -rf v2.1.1.tar.gz && \
     mkdir -p vmaf-2.1.1/libvmaf/build &&\
     cd vmaf-2.1.1/libvmaf/build && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" meson setup -Denable_tests=false -Denable_docs=false --buildtype=release --default-library=static .. --prefix "$HOME/ffmpeg_build" --bindir="$HOME/ffmpeg_build/bin" --libdir="$HOME/ffmpeg_build/lib" && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" ninja && \
-    ninja install
+    ninja install && \
+    cd ../../.. && rm -rf vmaf*
 
 # ffmpeg
 RUN cd ~/ffmpeg_sources && \
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2 && \
     tar xjvf ffmpeg-snapshot.tar.bz2 && \
+    rm -rf ffmpeg-snapshot.tar.bz2 && \
     cd ffmpeg && \
     PATH="$HOME/ffmpeg_build/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
     --prefix="$HOME/ffmpeg_build" \
@@ -150,6 +167,7 @@ RUN cd ~/ffmpeg_sources && \
     --enable-libx264 \
     --enable-libx265 \
     --enable-nonfree && \
-    PATH="$HOME/ffmpeg_build/bin:$PATH" make && \
+    PATH="$HOME/ffmpeg_build/bin:$PATH"  make && \
     make install && \
-    hash -r
+    hash -r && \
+    make clean
