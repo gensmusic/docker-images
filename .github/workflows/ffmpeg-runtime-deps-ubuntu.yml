@@ -1,4 +1,4 @@
-name: FFmpeg runtime deps
+name: FFmpeg runtime ubuntu deps
 
 on:
   push:
