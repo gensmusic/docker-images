@@ -1,6 +1,6 @@
 FROM debian:buster-slim
 
-RUN DEBIAN_FRONTEND=noninteractive && apt-get update -qq && apt-get -y install \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq && apt-get -y install \
   libass-dev \
   libfreetype6-dev \
   libgnutls28-dev \

@@ -1,6 +1,6 @@
 FROM ubuntu
 
-RUN DEBIAN_FRONTEND=noninteractive && apt-get update -qq && apt-get -y install \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq && apt-get -y install \
   autoconf \
   automake \
   build-essential \
@@ -26,7 +26,7 @@ RUN DEBIAN_FRONTEND=noninteractive && apt-get update -qq && apt-get -y install \
   yasm \
   zlib1g-dev
 
-RUN apt install -y libunistring-dev
+RUN DEBIAN_FRONTEND=noninteractive apt install -y libunistring-dev
 
 RUN mkdir -p ~/ffmpeg_sources ~/ffmpeg_build/bin
 
@@ -55,7 +55,7 @@ RUN cd ~/ffmpeg_sources && \
     cd .. && rm -rf x264
 
 # libx265
-RUN apt-get -y install libnuma-dev && \
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install libnuma-dev && \
     cd ~/ffmpeg_sources && \
     wget -O x265.tar.bz2 https://bitbucket.org/multicoreware/x265_git/get/master.tar.bz2 && \
     tar xjvf x265.tar.bz2 && \
@@ -116,7 +116,7 @@ RUN cd ~/ffmpeg_sources && \
     cd ../.. && rm -rf SVT-AV1
 
 # libdav1d
-RUN apt-get install -y python3-pip && \
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip && \
     pip3 install --user meson
 RUN cd ~/ffmpeg_sources && \
     git -C dav1d pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/dav1d.git && \
