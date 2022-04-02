@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM ubuntu
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq && apt-get -y install \
   libass-dev \
