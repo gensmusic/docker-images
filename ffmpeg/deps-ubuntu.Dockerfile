@@ -1,6 +1,6 @@
 FROM ubuntu
 
-RUN apt-get update -qq && apt-get -y install \
+RUN DEBIAN_FRONTEND=noninteractive && apt-get update -qq && apt-get -y install \
   autoconf \
   automake \
   build-essential \
